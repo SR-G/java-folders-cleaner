@@ -1,2 +1,9 @@
 # java-folders-cleaner
 
+# Development
+
+## TODO
+
+- New `--patterns` flag to override default flags
+- Better logging system instead of standard output
+- Handle by default an external file with patterns ("<binary_name>.conf", with one pattern per line)

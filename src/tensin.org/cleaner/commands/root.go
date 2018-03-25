@@ -83,13 +83,9 @@ var RootCmd = &cobra.Command{
 				}
 			}
 		}
-
-		// os.RemoveAll()
 	  },
 }
 
 func init() {
 	// RootCmd.PersistentFlags().StringVarP(&ConfigurationFileName, "configuration", "", "watchthatpage.json", "Configuration file name. Default is binary name + .json (e.g. 'watchthatpage.json'), in the same folder than the binary itself")
-	// daemon.Server.Start()
-	// fmt.Println("start")
 }

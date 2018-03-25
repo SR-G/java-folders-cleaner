@@ -34,3 +34,5 @@ glide.lock
 output.json
 *.log
 src/github.com
+src/golang.org
+src/gopkg.in

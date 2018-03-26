@@ -128,6 +128,7 @@ var Path string
 var Debug bool
 
 func init() {
+	cobra.MousetrapHelpText = ""
 	RootCmd.PersistentFlags().StringVarP(&Path, "path", "", "", "The path to analyze. Default is current folder (same value than `$(pwd)`)")
 	RootCmd.PersistentFlags().BoolVarP(&Debug, "debug", "", false, "Is debug activated (false by default)")
 }

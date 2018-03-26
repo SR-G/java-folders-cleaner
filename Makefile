@@ -33,9 +33,8 @@ clean:
 distribution: clean install
 	mkdir /go/bin/linux/ 
 	mv /go/bin/${BINARY} /go/bin/linux/
-	# cp /go/src/main/resources/sol.json /go/bin/linux/ 
-	# cp /go/src/main/resources/sol.json /go/bin/windows_amd64/
-	# cp /go/src/script/*.bat /go/bin/windows_amd64
+	cp /go/resources/cleaner.conf /go/bin/linux/
+	cp /go/resources/cleaner.conf /go/bin/windows_amd64/
 	cd /go/bin/ ; zip -r -9 ${BINARY}.zip ./linux ; zip -r -9 ${BINARY}.zip ./windows_amd64
 
 test:

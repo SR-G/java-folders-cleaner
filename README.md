@@ -1,5 +1,26 @@
 # java-folders-cleaner
 
+## Usage
+
+```bash
+cleaner
+
+Usage:
+  cleaner [flags]
+  cleaner [command]
+
+Available Commands:
+  help        Help about any command
+  version     Prints the version of the chainer command.
+
+Flags:
+      --debug         Is debug activated (false by default)
+  -h, --help          help for cleaner
+      --path $(pwd)   The path to analyze. Default is current folder (same value than $(pwd))
+
+Use "cleaner [command] --help" for more information about a command.
+```
+
 # Development
 
 ## TODO

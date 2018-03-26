@@ -6,14 +6,38 @@ import (
 	"bufio"
 	"strconv"
 	"time"
-        "path/filepath"
+	"runtime"
+    "path/filepath"
 	"strings"	
 	
 	"github.com/spf13/cobra"
 	"github.com/karrick/godirwalk"	
-        // "github.com/shirou/gopsutil/disk"
-
+    "github.com/shirou/gopsutil/disk"
 )
+
+func diskUsage() string {
+	path, err := os.Getwd()
+	if err != nil {
+		return "<undefined>"
+	}
+
+	if runtime.GOOS == "windows" {
+		p := strings.Index(path, "\\")
+		if p != -1 {
+			path = path[:p+1]
+		}
+	} else {
+		p := strings.Index(path, "/")
+		if p != -1 {
+			path = path[:p+1]
+		}
+	}
+	u, err := disk.Usage(path)
+	if err != nil {
+		return "<undefined>"
+	}
+	return strconv.FormatUint(u.Free /1024/1024, 10) + " MiB"
+}
 
 // RootCmd is the main command = the program itself
 var RootCmd = &cobra.Command{
@@ -22,6 +46,7 @@ var RootCmd = &cobra.Command{
 	Long:  `cleaner`,
 	Run: func(cmd *cobra.Command, args []string) {
 		start := time.Now()
+		freeSpaceBefore := diskUsage()
 
 		patterns := make([]string, 0)
 		dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
@@ -45,11 +70,9 @@ var RootCmd = &cobra.Command{
 				fmt.Println(err)
 			}			
 		} else {
-			fmt.Println("Configuration [" + configurationFileName + "] not found, applying default patterns")
+			fmt.Println("Configuration [" + configurationFileName + "] not found, applying default java patterns")
 			patterns = append(patterns, "bin")
 			patterns = append(patterns, "target")
-			patterns = append(patterns, "*.log")
-			patterns = append(patterns, "*.class")
 		}
 
 		searchDir := "."
@@ -119,7 +142,8 @@ var RootCmd = &cobra.Command{
 			},
 		})
 		elapsed := time.Since(start)
-		fmt.Printf("Execution took %s, results are :", elapsed)
+		freeSpaceAfter := diskUsage()
+		fmt.Printf("Execution took %s, went from %s to %s free space, results are :", elapsed, freeSpaceBefore, freeSpaceAfter)
 		fmt.Println("\n - " + strconv.Itoa(nbRemovedDirectories) + " removed directories\n - " + strconv.Itoa(nbRemovedFiles) + " removed files")
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)

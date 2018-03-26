@@ -7,7 +7,7 @@ PWD=$(shell pwd)
 VERSION=1.0.0
 BUILD_TIME=$(date "%FT%T%z")
 
-LDFLAGS=-ldflags "-d -s -w -X tensin.org/clea,er/core/version.Build=`git rev-parse HEAD`" -a -tags netgo -installsuffix netgo
+LDFLAGS=-ldflags "-d -s -w -X tensin.org/cleaner/core/version.Build=`git rev-parse HEAD`" -a -tags netgo -installsuffix netgo
 PACKAGE=tensin.org/cleaner
 
 $(BINARY): 

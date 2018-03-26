@@ -6,11 +6,13 @@ import (
 	"bufio"
 	"strconv"
 	"time"
-    "path/filepath"
+        "path/filepath"
 	"strings"	
 	
 	"github.com/spf13/cobra"
 	"github.com/karrick/godirwalk"	
+        // "github.com/shirou/gopsutil/disk"
+
 )
 
 // RootCmd is the main command = the program itself
@@ -23,9 +25,10 @@ var RootCmd = &cobra.Command{
 
 		patterns := make([]string, 0)
 		dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-		configurationFileName := dir + string(os.PathSeparator) + filepath.Base(os.Args[0]) + ".conf"
-		configurationFileInfo, _ := os.Stat(configurationFileName)
-		if configurationFileInfo.Mode().IsRegular() {
+		configurationFileName := dir + string(os.PathSeparator) + strings.TrimSuffix(filepath.Base(os.Args[0]),".exe") + ".conf"
+
+		// if configurationFileInfo.Mode().IsRegular() {
+                if _, err := os.Stat(configurationFileName); err == nil {
 			fmt.Println("Loading configuration from [" + configurationFileName + "]")
 			file, err := os.Open(configurationFileName)
 			if err != nil {
@@ -42,6 +45,7 @@ var RootCmd = &cobra.Command{
 				fmt.Println(err)
 			}			
 		} else {
+			fmt.Println("Configuration [" + configurationFileName + "] not found, applying default patterns")
 			patterns = append(patterns, "bin")
 			patterns = append(patterns, "target")
 			patterns = append(patterns, "*.log")

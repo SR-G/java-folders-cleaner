@@ -69,6 +69,11 @@ var RootCmd = &cobra.Command{
 			if err := scanner.Err(); err != nil {
 				fmt.Println(err)
 			}			
+		} else if Patterns != "" {
+			fmt.Println("Configuration [" + configurationFileName + "] not found, applying patterns provided through command line")
+			for _, pattern := range strings.Split(Patterns, ",") {
+				patterns = append(patterns, strings.Trim(pattern, " "))
+			}
 		} else {
 			fmt.Println("Configuration [" + configurationFileName + "] not found, applying default java patterns")
 			patterns = append(patterns, "bin")
@@ -109,9 +114,9 @@ var RootCmd = &cobra.Command{
 				}
 
 				if matched {
-					fmt.Println("- [DELETE] path [" + path + "] (matching pattern is [" + matchedPattern + "])")
+					fmt.Println("- [DELETED] path [" + path + "] (matching pattern is [" + matchedPattern + "])")
 				} else if Debug && ! matched {
-					fmt.Println("- [KEEP]   path [" + path + "]")
+					fmt.Println("- [KEPT]    path [" + path + "]")
 				}
 
 				if matched {
@@ -154,9 +159,11 @@ var RootCmd = &cobra.Command{
 
 var Path string
 var Debug bool
+var Patterns string
 
 func init() {
 	cobra.MousetrapHelpText = ""
 	RootCmd.PersistentFlags().StringVarP(&Path, "path", "", "", "The path to analyze. Default is current folder (same value than `$(pwd)`)")
+	RootCmd.PersistentFlags().StringVarP(&Patterns, "patterns", "", "", "Override default patterns (only used if no configuration file found). Separate values with commas.")
 	RootCmd.PersistentFlags().BoolVarP(&Debug, "debug", "", false, "Is debug activated (false by default)")
 }

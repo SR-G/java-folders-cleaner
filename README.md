@@ -94,4 +94,4 @@ Execution took 34.9460339s, went from 9176 MiB to 9265 MiB free space, results a
 - [ ] Better logging system instead of standard output
 - [x] Dump disk space retrieved
 - [x] Handle by default an external file with patterns ("<binary_name>.conf", with one pattern per line)
-
+- [ ] Improve performances

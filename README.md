@@ -1,5 +1,24 @@
 # java-folders-cleaner
 
+Just put the .exe and its associated configuration file in your workspace folder and execute it (double-click, of from a `cmd.exe` command line).
+
+## Configuration
+
+Configuration file has just to be located in the same folder than the executable, with the same name ending by `.conf`.
+
+Example of java configuration :
+
+```
+.cache
+bin
+build
+classes
+dist
+target
+work
+*.class
+```
+
 ## Usage
 
 ```bash

@@ -97,45 +97,43 @@ Use "cleaner [command] --help" for more information about a command.
 Example :
 
 ```
-$ ../saig/trunk/cleaner.exe
-Loading configuration from [C:\Users\sersimon\workspaces\projects-psa\saig\trunk\cleaner.conf]
-Now cleaning java useless items from [.] with patterns [.cache, bin, build, classes, dist, target, work, *.class]
-- [DELETE] path [trunk\pmm-archetype-occurrences\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pmm-core\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pmm-core\work] (matching pattern is [work])
-- [DELETE] path [trunk\pmm-logplayer\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pmm-site\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pmm-war-backoffice\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pmm-war-webapp\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pmm-web-services-forcagescheminement\WebContent\WEB-INF\classes] (matching pattern is [classes])
-- [DELETE] path [trunk\pmm-webapp\web\WEB-INF\classes] (matching pattern is [classes])
-- [DELETE] path [trunk\pyr01\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr02\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr03\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr04\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr05\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr06\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr07\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr08\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr29\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr66\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyr67\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrm1\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrm2\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrmu\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrpy\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrrj\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrrj\work] (matching pattern is [work])
-- [DELETE] path [trunk\pyrsx\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrta\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrv1\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrv2\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrvf\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrvh\bin] (matching pattern is [bin])
-- [DELETE] path [trunk\pyrvl\bin] (matching pattern is [bin])
-Execution took 34.9460339s, went from 9176 MiB to 9265 MiB free space, results are :
-- 33 removed directories
-- 0 removed files
+$ ./cleaner.exe --folders "/c/Tools/eclipse/"
+Detected folders to purge are [C:/Tools/eclipse/]
+Loading configuration from [C:\Tools\java-folders-cleaner\cleaner.conf]
+Patterns taken in account are :
+ - workspaces
+   - **\.metadata\.plugins\org.eclipse.core.resources\.history
+   - **\.metadata\.plugins\org.eclipse.jdt.core\*
+ - eclipse
+   - **\*.log
+   - **\configuration\org.eclipse.osgi\*
+ - default
+   - **\*.tmp
+ - projects
+   - **\bin
+   - **\build
+   - **\classes
+   - **\web\WEB-INF\classes
+   - **\dist
+   - **\target
+   - **\work
+   - **\*.class
+   - **\*.log
+Now cleaning java useless items from [C:/Tools/eclipse/]
+- [BROWSE]  path [C:\Tools\eclipse\2018-12-R\java] (detected as type [eclipse]) purge patterns will be [**\*.tmp, **\*.log, **\configuration\org.eclipse.osgi\*]
+- [BROWSE]  path [C:\Tools\eclipse\indigo\java] (detected as type [eclipse]) purge patterns will be [**\*.tmp, **\*.log, **\configuration\org.eclipse.osgi\*]
+- [BROWSE]  path [C:\Tools\eclipse\luna\java] (detected as type [eclipse]) purge patterns will be [**\*.tmp, **\*.log, **\configuration\org.eclipse.osgi\*]
+- [BROWSE]  path [C:\Tools\eclipse\mars\java] (detected as type [eclipse]) purge patterns will be [**\*.tmp, **\*.log, **\configuration\org.eclipse.osgi\*]
+- [BROWSE]  path [C:\Tools\eclipse\neon\java] (detected as type [eclipse]) purge patterns will be [**\*.tmp, **\*.log, **\configuration\org.eclipse.osgi\*]
+- [BROWSE]  path [C:\Tools\eclipse\oxygen\java] (detected as type [eclipse]) purge patterns will be [**\*.tmp, **\*.log, **\configuration\org.eclipse.osgi\*]
+- [BROWSE]  path [C:\Tools\eclipse\photon\java] (detected as type [eclipse]) purge patterns will be [**\*.tmp, **\*.log, **\configuration\org.eclipse.osgi\*]
+- [DELETED] path [C:\Tools\eclipse\photon\java\configuration\org.eclipse.osgi\138] (matched pattern is [**\configuration\org.eclipse.osgi\*])
+- [DELETED] path [C:\Tools\eclipse\photon\java\configuration\org.eclipse.osgi\150] (matched pattern is [**\configuration\org.eclipse.osgi\*])
+- [DELETED] path [C:\Tools\eclipse\photon\java\configuration\org.eclipse.osgi\151] (matched pattern is [**\configuration\org.eclipse.osgi\*])
+(...)
+Execution took 4m17.2027311s, went from 68085 MiB to 68106 MiB free space, results are :
+ - 1006 removed directories
+ - 12 removed files
 ```
 
 # Development

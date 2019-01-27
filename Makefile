@@ -29,6 +29,7 @@ clean:
 	-@rm -f bin/${BINARY} 2>/dev/null || true
 	-@rm -rf bin/linux 2>/dev/null || true
 	-@rm -rf bin/windows_amd64 2>/dev/null || true
+	-@rm -f bin/*.zip 2>/dev/null || true
 
 distribution: clean install
 	mkdir /go/bin/linux/ 

@@ -135,6 +135,7 @@ func purgeDirectoryContent(currentFolder string, allPatterns map[string][]string
 				err := os.RemoveAll(fullPath)
 				if err != nil {
 					fmt.Println("  [ERROR]   path [" + fullPath + "] : " + err.Error())
+					nbErrors++
 				} else {
 					nbRemovedDirectories++
 				}
@@ -143,6 +144,7 @@ func purgeDirectoryContent(currentFolder string, allPatterns map[string][]string
 				err := os.RemoveAll(fullPath)
 				if err != nil {
 					fmt.Println("  [ERROR]   path [" + fullPath + "] : " + err.Error())
+					nbErrors++
 				} else {
 					nbRemovedFiles++
 				}
@@ -182,12 +184,9 @@ func loadAllPatternsFromConfiguration(configurationFileName string) map[string][
 					currentSection = strings.Replace(currentLine, "[", "", 1)
 					currentSection = strings.Replace(currentSection, "]", "", 1)
 					currentSection = strings.TrimSpace(currentSection)
-
-					// Remove current line as it is a header [...]
-					currentLine = ""
-				}
-				
-				if (currentLine != "") {
+				} else if (strings.HasPrefix(currentLine, "#")) { 
+					// comment found, nothing to do
+				} else {
 					patterns[currentSection] = append(patterns[currentSection], sanitizePathPerOS(currentLine))
 				}
 			}
@@ -258,7 +257,7 @@ var RootCmd = &cobra.Command{
 			elapsed := time.Since(start)
 
 			fmt.Printf("Execution took %s, went from %s to %s free space, results are :", elapsed, freeSpaceBefore, freeSpaceAfter)
-			fmt.Println("\n - " + strconv.Itoa(nbRemovedDirectories) + " removed directories\n - " + strconv.Itoa(nbRemovedFiles) + " removed files")
+			fmt.Println("\n - " + strconv.Itoa(nbRemovedDirectories) + " removed directories\n - " + strconv.Itoa(nbRemovedFiles) + " removed files\n" + strconv.Itoa(nbErrors) + " errors while deleting.")
 		}
 		os.Exit(1)
 	},
@@ -271,6 +270,7 @@ var Folders string
 
 var nbRemovedFiles int 
 var nbRemovedDirectories int
+var nbErrors int
 
 func init() {
 	cobra.MousetrapHelpText = ""

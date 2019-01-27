@@ -55,7 +55,7 @@ func retrieveCurrentType(currentFolder string) string {
 	files, _ := ioutil.ReadDir(currentFolder)
 	for _, f := range files {
 		s := f.Name()
-		if (s == "eclipse.exe") {
+		if (s == "eclipse.exe" || s == "eclipse") {
 			result = "eclipse"
 			break
 		} else if (s == ".metadata") {

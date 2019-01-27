@@ -57,10 +57,13 @@ func retrieveCurrentType(currentFolder string) string {
 		s := f.Name()
 		if (s == "eclipse.exe") {
 			result = "eclipse"
+			break
 		} else if (s == ".metadata") {
 			result = "workspaces"
-		} else if (s == ".classpath" || s == ".eclipse" || s == ".project" ) {
+			break
+		} else if (s == ".classpath" || s == ".project" ) {
 			result = "projects"
+			break
 		}
 	}			
 
@@ -104,12 +107,11 @@ func purgeDirectoryContent(currentFolder string, allPatterns map[string][]string
 
 	files, _ := ioutil.ReadDir(currentFolder)
 	for _, path := range files {
-		fullPath, _ := filepath.Abs(currentFolder + "/" + path.Name())
+		fullPath, _ := filepath.Abs(filepath.Join(currentFolder, path.Name()))
 
 		matched := false
 		matchedPattern := ""
 		for _, pattern := range currentPatterns {
-			// name := filepath.Base(path.Name())
 			name := sanitizePathPerOS(fullPath)
 			// fmt.Println(" >> " + pattern + " | " + name)
 			// m, err := filepath.Match(pattern, name)
@@ -124,19 +126,26 @@ func purgeDirectoryContent(currentFolder string, allPatterns map[string][]string
 			}
 		}
 
-		// fmt.Println(" >>> " + fullPath)
 		file, _ := os.Open(fullPath)
-		defer file.Close()			
 		fi, _ := file.Stat();
+		file.Close()			
 		if matched {
 			if (fi.IsDir()) {
 				fmt.Println("- [DELETED] path [" + fullPath + "] (matched pattern is [" + matchedPattern + "])")
-				os.RemoveAll(fullPath)
-				nbRemovedDirectories++
+				err := os.RemoveAll(fullPath)
+				if err != nil {
+					fmt.Println("  [ERROR]   path [" + fullPath + "] : " + err.Error())
+				} else {
+					nbRemovedDirectories++
+				}
 			} else {
 				fmt.Println("- [DELETED] file [" + fullPath + "] (matched pattern is [" + matchedPattern + "])")
-				os.Remove(fullPath)
-				nbRemovedFiles++
+				err := os.RemoveAll(fullPath)
+				if err != nil {
+					fmt.Println("  [ERROR]   path [" + fullPath + "] : " + err.Error())
+				} else {
+					nbRemovedFiles++
+				}
 			}
 		} else {
 			if (fi.IsDir()) {
@@ -260,14 +269,12 @@ var Debug bool
 var Patterns string
 var Folders string
 
-
 var nbRemovedFiles int 
 var nbRemovedDirectories int
 
 func init() {
 	cobra.MousetrapHelpText = ""
-	// RootCmd.PersistentFlags().StringVarP(&Path, "path", "", "", "The path to analyze. Default is current folder (same value than `$(pwd)`)")
-	RootCmd.PersistentFlags().StringVarP(&Patterns, "patterns", "", "", "Override default patterns (only used if no configuration file found). Separate values with commas.")
 	RootCmd.PersistentFlags().BoolVarP(&Debug, "debug", "", false, "Is debug activated (false by default)")
+	RootCmd.PersistentFlags().StringVarP(&Patterns, "patterns", "", "", "Override default patterns (only used if no configuration file found). Separate values with commas.")
 	RootCmd.PersistentFlags().StringVarP(&Folders, "folders", "", "", "Folders to clean, separated by commas. Current folder will be used as a default, if --folders is not defined.")
 }

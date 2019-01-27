@@ -1,5 +1,24 @@
 # java-folders-cleaner
 
+Just put the .exe and its associated configuration file in your workspace folder and execute it (double-click, of from a `cmd.exe` command line).
+
+## Configuration
+
+Configuration file has just to be located in the same folder than the executable, with the same name ending by `.conf`.
+
+Example of java configuration :
+
+```
+.cache
+bin
+build
+classes
+dist
+target
+work
+*.class
+```
+
 ## Usage
 
 ```bash
@@ -75,4 +94,4 @@ Execution took 34.9460339s, went from 9176 MiB to 9265 MiB free space, results a
 - [ ] Better logging system instead of standard output
 - [x] Dump disk space retrieved
 - [x] Handle by default an external file with patterns ("<binary_name>.conf", with one pattern per line)
-
+- [ ] Improve performances

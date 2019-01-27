@@ -36,15 +36,24 @@ func diskUsage(path string) string {
 	return strconv.FormatUint(u.Free /1024/1024, 10) + " MiB"
 }
 
-func buildFoldersToProcess(folders string) []string {
+func buildFoldersToProcess(folders string, patterns []string) []string {
 	results := make([]string, 0)
-	if (folders == "") {
-		results = append(results, "./")
-	} else {
+	if (folders != "") {
 		for _, folder := range strings.Split(folders, ",") {
 			results = append(results, strings.TrimSpace(folder))
 		}
 	}
+
+	for _, folder := range patterns {
+		if (!contains(results, folder)) {
+			results = append(results, strings.TrimSpace(folder))
+		}
+	}
+
+	if (len(results) == 0) {
+		results = append(results, "./")
+	}
+
 	return results
 }
 
@@ -101,7 +110,7 @@ func purgeDirectoryContent(currentFolder string, allPatterns map[string][]string
 					currentPatterns = append(currentPatterns, pattern)
 				}
 			}
-			fmt.Println("- [BROWSE]  path [" + currentFolder + "] (detected as type [" + currentType + "]) purge patterns will be [" + strings.Join(currentPatterns, ", ") + "]")
+			fmt.Println("  - [BROWSE]  path [" + currentFolder + "] (detected as type [" + currentType + "]) purge patterns will be [" + strings.Join(currentPatterns, ", ") + "]")
 		}
 	}
 
@@ -131,19 +140,19 @@ func purgeDirectoryContent(currentFolder string, allPatterns map[string][]string
 		file.Close()			
 		if matched {
 			if (fi.IsDir()) {
-				fmt.Println("- [DELETED] path [" + fullPath + "] (matched pattern is [" + matchedPattern + "])")
+				fmt.Println("  - [DELETED] path [" + fullPath + "] (matched pattern is [" + matchedPattern + "])")
 				err := os.RemoveAll(fullPath)
 				if err != nil {
-					fmt.Println("  [ERROR]   path [" + fullPath + "] : " + err.Error())
+					fmt.Println("    [ERROR]   path [" + fullPath + "] : " + err.Error())
 					nbErrors++
 				} else {
 					nbRemovedDirectories++
 				}
 			} else {
-				fmt.Println("- [DELETED] file [" + fullPath + "] (matched pattern is [" + matchedPattern + "])")
+				fmt.Println("  - [DELETED] file [" + fullPath + "] (matched pattern is [" + matchedPattern + "])")
 				err := os.RemoveAll(fullPath)
 				if err != nil {
-					fmt.Println("  [ERROR]   path [" + fullPath + "] : " + err.Error())
+					fmt.Println("    [ERROR]   path [" + fullPath + "] : " + err.Error())
 					nbErrors++
 				} else {
 					nbRemovedFiles++
@@ -152,12 +161,12 @@ func purgeDirectoryContent(currentFolder string, allPatterns map[string][]string
 		} else {
 			if (fi.IsDir()) {
 				if Debug {
-					fmt.Println("- [RECURSE] path [" + fullPath + "]")
+					fmt.Println("  - [RECURSE] path [" + fullPath + "]")
 				}
 				purgeDirectoryContent(fullPath, allPatterns, currentPatterns)
 			} else {
 				if Debug {
-					fmt.Println("- [KEPT]    file [" + fullPath + "]")
+					fmt.Println("  - [KEEP]    file [" + fullPath + "]")
 				}				
 			}
 		}
@@ -206,6 +215,10 @@ func loadAllPatternsFromConfiguration(configurationFileName string) map[string][
 		patterns["default"] = append(patterns["default"], "target")
 	}
 
+	return patterns
+}
+
+func dumpLoadedPatterns(patterns map[string][]string) {
 	fmt.Println("Patterns taken in account are : ")
 	for key, value := range patterns {
 		fmt.Println(" - " + key)
@@ -213,8 +226,10 @@ func loadAllPatternsFromConfiguration(configurationFileName string) map[string][
 			fmt.Println("   - " + p)
 		}
 	}
+}
 
-	return patterns
+func dumpFoldersToProcess(folders []string) {
+	fmt.Println("Detected folders to purge are [" + strings.Join(folders, ", ") + "]")
 }
 
 func retrievePatternsForType(currentType string, allPatterns map[string][]string) []string {
@@ -236,28 +251,35 @@ var RootCmd = &cobra.Command{
 	Short: "cleaner",
 	Long:  `cleaner`,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		folders := buildFoldersToProcess(Folders)
-		fmt.Println("Detected folders to purge are [" + strings.Join(folders, ", ") + "]")
-		
 		dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 		configurationFileName := dir + string(os.PathSeparator) + strings.TrimSuffix(filepath.Base(os.Args[0]),".exe") + ".conf"
 
 		// allPatterns["default"] = default / generic patterns
 		// allPattersn["<section>"] = patterns loaded from [<section>] from the configuration file
 		allPatterns := loadAllPatternsFromConfiguration(configurationFileName)
+		folders := buildFoldersToProcess(Folders, allPatterns["paths"])
+		delete(allPatterns, "paths")
+		dumpFoldersToProcess(folders)
+		dumpLoadedPatterns(allPatterns)
 
 		for _, currentFolder := range folders {
-			fmt.Println("Now cleaning java useless items from [" + currentFolder + "]")
+			file, err := os.Open(currentFolder)
+			if (err != nil) {
+				file.Close()
+				fmt.Println("Now discarding folder [" + currentFolder + "] as it hasn't been found")
+			} else {
+				file.Close()
+				fmt.Println("Now cleaning java useless items from [" + currentFolder + "]")
 
-			start := time.Now()
-			freeSpaceBefore := diskUsage(currentFolder)
-			purgeDirectoryContent(currentFolder, allPatterns, allPatterns["default"]);
-			freeSpaceAfter := diskUsage(currentFolder)
-			elapsed := time.Since(start)
-
-			fmt.Printf("Execution took %s, went from %s to %s free space, results are :", elapsed, freeSpaceBefore, freeSpaceAfter)
-			fmt.Println("\n - " + strconv.Itoa(nbRemovedDirectories) + " removed directories\n - " + strconv.Itoa(nbRemovedFiles) + " removed files\n" + strconv.Itoa(nbErrors) + " errors while deleting.")
+				start := time.Now()
+				freeSpaceBefore := diskUsage(currentFolder)
+				purgeDirectoryContent(currentFolder, allPatterns, allPatterns["default"]);
+				freeSpaceAfter := diskUsage(currentFolder)
+				elapsed := time.Since(start)
+	
+				fmt.Printf("  Execution took %s, went from %s to %s free space, results are :", elapsed, freeSpaceBefore, freeSpaceAfter)
+				fmt.Println("\n   - " + strconv.Itoa(nbRemovedDirectories) + " removed directories\n   - " + strconv.Itoa(nbRemovedFiles) + " removed files\n   - " + strconv.Itoa(nbErrors) + " errors while deleting.")
+			}
 		}
 		os.Exit(1)
 	},

@@ -57,7 +57,16 @@ Example of java configuration :
 [eclipse]
 **/*.log
 **/configuration/org.eclipse.osgi/*
+
+# This will define additional paths to purge
+[paths]
+c:\Tools\eclipse\
+c:\Workspaces\
 ```
+
+First lines (the ones without sections) are applyed everywhere (whatever the kind of detected folder, and in addition to patterns declared in a section).
+
+Comments are possible through lines starting with `#`.
 
 Possible sections are :
 
@@ -65,9 +74,7 @@ Possible sections are :
 - `workspaces` : folder containing an eclipse workspace, that means containing a `.metadata` sub-folder
 - `eclipse` : folder containing an eclipse installation, that means containing an `eclipse.exe` file
 
-First lines (the ones without sections) are applyed everywhere (whatever the kind of detected folder, and in addition to patterns declared in a section).
-
-Comments are possible through lines starting with `#`.
+Additionnaly a `[paths]` section may also be defined to specify which full paths have to be purged (will be merged with `--folders` values, if defined).
 
 ## Usage
 

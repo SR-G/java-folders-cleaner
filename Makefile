@@ -1,5 +1,6 @@
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
+SHELL=bash
 
 BINARY=cleaner
 PWD=$(shell pwd)
@@ -39,14 +40,13 @@ distribution: clean install
 	cd /go/bin/ ; zip -r -9 ${BINARY}.zip ./linux ; zip -r -9 ${BINARY}.zip ./windows_amd64
 
 test:
-	-@mkdir bin/target 2>/dev/null || true
-	-@mkdir bin/bin 2>/dev/null || true
-	-@touch bin/bin/test.class 2>/dev/null || true
-	-@touch bin/target/test.jar 2>/dev/null || true
-	-@touch bin/target/test.log 2>/dev/null || true
-	-@touch bin/test.log 2>/dev/null || true
-	-@touch bin/toto.class 2>/dev/null || true
-	-@mkdir bin/logs 2>/dev/null || true
+	-@mkdir -p bin/eclipse_installations/{photon,luna,mars,2018-12}/configuration/org.eclipse.osgi/{01,23,39,49,58,104} 2>/dev/null || true
+	-@mkdir -p bin/workspaces/{workspace_a,workspace_b}/.metadata 2>/dev/null || true
+	-@mkdir -p bin/projects/{project_a,project_b,project_c}/{bin,build,dist,target} 2>/dev/null || true
+	-@touch bin/projects/{project_a,project_b}/target/{dependency1,dependency2,dependency3}.jar || true
+	-@touch bin/projects/{project_a,project_b,project_c}/.{project,classpath} || true
+	-@touch bin/projects/{project_a,project_b,project_c}/bin/{file1,file2,file3,file4,file5}.class || true
+	-@touch bin/eclipse_installations/{photon,luna,mars,2018-12}/eclipse.exe 2>/dev/null || true
 
 run:
 	bin/cleaner
